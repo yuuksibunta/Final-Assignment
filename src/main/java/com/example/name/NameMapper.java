@@ -24,4 +24,6 @@ public interface NameMapper {
     @Update("UPDATE names SET name = #{name}, age = #{age} WHERE id = #{id}")
     void update(@Param("id") int id, @Param("name") String name, @Param("age") int age);
 
+    @Delete("DELETE FROM names WHERE id = #{id}")
+    void delete(@Param("id") int id);
 }

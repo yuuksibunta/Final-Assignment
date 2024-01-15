@@ -1,6 +1,5 @@
 package com.example.name;
 
-
 public class Name {
 
     private Integer id;

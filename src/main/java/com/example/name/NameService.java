@@ -40,4 +40,14 @@ public class NameService {
             throw new ResourceNotFoundException("指定されたIDの名前は存在しません");
         }
     }
+
+    public void delete(int id) {
+        Optional<Name> optionalExistingName = nameMapper.findById(id);
+
+        if (optionalExistingName.isPresent()) {
+            nameMapper.delete(id);
+        } else {
+            throw new ResourceNotFoundException("指定されたIDの名前は存在しません");
+        }
+    }
 }
