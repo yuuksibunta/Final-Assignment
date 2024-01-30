@@ -1,4 +1,6 @@
-package com.example.name;
+package com.example.name.entity;
+
+import java.util.Objects;
 
 public class Name {
 

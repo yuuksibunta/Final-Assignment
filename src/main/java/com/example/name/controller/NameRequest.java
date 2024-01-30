@@ -1,4 +1,4 @@
-package com.example.name;
+package com.example.name.controller;
 
 import jakarta.validation.constraints.NotBlank;
 
@@ -28,6 +28,7 @@ public class NameRequest {
     public void setAge(int age) {
         this.age = age;
     }
+
     public boolean isValid() {
 
         return name != null && !name.trim().isEmpty();

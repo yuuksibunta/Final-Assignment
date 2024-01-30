@@ -1,5 +1,8 @@
-package com.example.name;
+package com.example.name.service;
 
+import com.example.name.entity.Name;
+import com.example.name.exception.ResourceNotFoundException;
+import com.example.name.mapper.NameMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

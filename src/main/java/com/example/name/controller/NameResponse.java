@@ -1,4 +1,4 @@
-package com.example.name;
+package com.example.name.controller;
 
 public class NameResponse {
     private final String message;

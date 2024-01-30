@@ -1,5 +1,6 @@
-package com.example.name;
+package com.example.name.mapper;
 
+import com.example.name.entity.Name;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
