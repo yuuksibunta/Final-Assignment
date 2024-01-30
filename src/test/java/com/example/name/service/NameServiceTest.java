@@ -12,7 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static com.jayway.jsonpath.internal.path.PathCompiler.fail;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -40,5 +42,14 @@ public class NameServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> {
             nameService.findById(10);
         });
+    }
+
+    @Test
+    public void 存在しないユーザーのIDを指定したときに正しいエラーメッセージが返されること() {
+        doReturn(Optional.empty()).when(nameMapper).findById(10);
+        Throwable exception = assertThrows(ResourceNotFoundException.class, () -> {
+            nameService.findById(10);
+        });
+        assertEquals("指定されたIDの名前は存在しません", exception.getMessage());
     }
 }
