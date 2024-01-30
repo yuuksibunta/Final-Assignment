@@ -39,17 +39,4 @@ public class Name {
     public void setAge(int age) {
         this.age = age;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Name name1 = (Name) o;
-        return age == name1.age && Objects.equals(id, name1.id) && Objects.equals(name, name1.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, age);
-    }
 }
