@@ -1,9 +1,9 @@
 package com.example.name.service;
 
-
 import com.example.name.entity.Name;
-import com.example.name.exception.ResourceNotFoundException;
+import com.example.name.exception.CustomExceptions;
 import com.example.name.mapper.NameMapper;
+import org.apache.ibatis.javassist.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.jayway.jsonpath.internal.path.PathCompiler.fail;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,7 +28,7 @@ public class NameServiceTest {
     NameMapper nameMapper;
 
     @Test
-    public void 存在するユーザーのIDを指定したときに正常にユーザーが返されること() {
+    public void 存在するユーザーのIDを指定したときに正常にユーザーが返されること() throws NotFoundException {
         doReturn(Optional.of(new Name(1, "yuki", 29))).when(nameMapper).findById(1);
         Name actual = nameService.findById(1);
         assertThat(actual).isEqualTo(new Name(1, "yuki", 29));
@@ -39,7 +38,7 @@ public class NameServiceTest {
     @Test
     public void 存在しないユーザーのIDを指定したときにエラーが返されること() {
         doReturn(Optional.empty()).when(nameMapper).findById(10);
-        assertThrows(ResourceNotFoundException.class, () -> {
+        assertThrows(CustomExceptions.NotFoundException.class, () -> {
             nameService.findById(10);
         });
     }
@@ -47,7 +46,7 @@ public class NameServiceTest {
     @Test
     public void 存在しないユーザーのIDを指定したときに正しいエラーメッセージが返されること() {
         doReturn(Optional.empty()).when(nameMapper).findById(10);
-        Throwable exception = assertThrows(ResourceNotFoundException.class, () -> {
+        Throwable exception = assertThrows(CustomExceptions.NotFoundException.class, () -> {
             nameService.findById(10);
         });
         assertEquals("指定されたIDの名前は存在しません", exception.getMessage());
