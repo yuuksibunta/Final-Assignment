@@ -1,5 +1,6 @@
 package com.example.name.controller;
 
+import com.example.name.entity.Name;
 import jakarta.validation.constraints.NotBlank;
 
 public class NameRequest {
@@ -7,6 +8,10 @@ public class NameRequest {
     private String name;
 
     private Integer age;
+
+    public Name convertToName() {
+        return new Name(null, this.name, this.age);
+    }
 
     public NameRequest(String name, Integer age) {
         this.name = name;

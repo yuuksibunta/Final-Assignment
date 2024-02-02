@@ -29,7 +29,7 @@ public class NameService {
     public Name insert(NameRequest nameRequest) throws CustomExceptions.BadRequestException {
         validateNameRequest(nameRequest);
 
-        Name newName = new Name(null, nameRequest.getName(), nameRequest.getAge());
+        Name newName = nameRequest.convertToName();
         nameMapper.insert(newName);
         return newName;
     }
