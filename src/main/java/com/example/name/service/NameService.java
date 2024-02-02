@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
 
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -33,7 +34,7 @@ public class NameService {
         return newName;
     }
     private void validateNameRequest(NameRequest nameRequest) throws CustomExceptions.BadRequestException {
-        if (StringUtils.isAnyBlank(nameRequest.getName()) || nameRequest.getAge() == null) {
+        if (StringUtils.isAnyBlank(nameRequest.getName()) || Objects.isNull(nameRequest.getAge())) {
             throw new CustomExceptions.BadRequestException("必須フィールドが入力されていません");
         }
     }
