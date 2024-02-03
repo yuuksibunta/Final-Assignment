@@ -1,11 +1,11 @@
 package com.example.name.controller;
 
 import com.example.name.entity.Name;
-import com.example.name.exception.CustomExceptions;
+import com.example.name.exception.BadRequestException;
+import com.example.name.exception.NotFoundException;
 import com.example.name.mapper.NameMapper;
 import com.example.name.service.NameService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,7 +27,7 @@ public class NameController {
     }
 
     @GetMapping("/names/{id}")
-    public ResponseEntity<Name> getName(@PathVariable("id") Integer id) throws CustomExceptions.NotFoundException {
+    public ResponseEntity<Name> getName(@PathVariable("id") Integer id) throws NotFoundException {
         Name name = nameService.findById(id);
         return new ResponseEntity<>(name, HttpStatus.OK);
     }
@@ -41,7 +41,7 @@ public class NameController {
         }
     }
 
-    @ExceptionHandler(value = {CustomExceptions.NotFoundException.class, CustomExceptions.BadRequestException.class,})
+    @ExceptionHandler(value = {NotFoundException.class, BadRequestException.class,})
     public ResponseEntity<Map<String, String>> handleCustomExceptions(
             RuntimeException e, HttpServletRequest request) {
         HttpStatus status = determineHttpStatus(e);
@@ -54,9 +54,9 @@ public class NameController {
         return new ResponseEntity<>(body, status);
     }
     private HttpStatus determineHttpStatus(RuntimeException e) {
-        if (e instanceof CustomExceptions.NotFoundException) {
+        if (e instanceof NotFoundException) {
             return HttpStatus.NOT_FOUND;
-        } else if (e instanceof CustomExceptions.BadRequestException) {
+        } else if (e instanceof BadRequestException) {
             return HttpStatus.BAD_REQUEST;
         }
         return null;

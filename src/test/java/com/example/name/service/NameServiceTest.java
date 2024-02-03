@@ -1,9 +1,9 @@
 package com.example.name.service;
 
 import com.example.name.entity.Name;
-import com.example.name.exception.CustomExceptions;
+import com.example.name.exception.NotFoundException;
 import com.example.name.mapper.NameMapper;
-import org.apache.ibatis.javassist.NotFoundException;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +38,7 @@ public class NameServiceTest {
     @Test
     public void 存在しないユーザーのIDを指定したときにエラーが返されること() {
         doReturn(Optional.empty()).when(nameMapper).findById(10);
-        assertThrows(CustomExceptions.NotFoundException.class, () -> {
+        assertThrows(NotFoundException.class, () -> {
             nameService.findById(10);
         });
     }
@@ -46,7 +46,7 @@ public class NameServiceTest {
     @Test
     public void 存在しないユーザーのIDを指定したときに正しいエラーメッセージが返されること() {
         doReturn(Optional.empty()).when(nameMapper).findById(10);
-        Throwable exception = assertThrows(CustomExceptions.NotFoundException.class, () -> {
+        Throwable exception = assertThrows(NotFoundException.class, () -> {
             nameService.findById(10);
         });
         assertEquals("指定されたIDの名前は存在しません", exception.getMessage());

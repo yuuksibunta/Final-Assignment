@@ -2,9 +2,9 @@ package com.example.name.service;
 
 import com.example.name.controller.NameRequest;
 import com.example.name.entity.Name;
-import com.example.name.exception.CustomExceptions;
+import com.example.name.exception.BadRequestException;
+import com.example.name.exception.NotFoundException;
 import com.example.name.mapper.NameMapper;
-import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,21 +21,21 @@ public class NameService {
         this.nameMapper = nameMapper;
     }
 
-    public Name findById(Integer id) throws CustomExceptions.NotFoundException {
+    public Name findById(Integer id) throws NotFoundException {
         Optional<Name> optionalName = nameMapper.findById(id);
-        return optionalName.orElseThrow(() -> new CustomExceptions.NotFoundException("指定されたIDの名前は存在しません"));
+        return optionalName.orElseThrow(() -> new NotFoundException("指定されたIDの名前は存在しません"));
     }
 
-    public Name insert(NameRequest nameRequest) throws CustomExceptions.BadRequestException {
+    public Name insert(NameRequest nameRequest) throws BadRequestException {
         validateNameRequest(nameRequest);
 
         Name newName = nameRequest.convertToName();
         nameMapper.insert(newName);
         return newName;
     }
-    private void validateNameRequest(NameRequest nameRequest) throws CustomExceptions.BadRequestException {
+    private void validateNameRequest(NameRequest nameRequest) throws BadRequestException {
         if (StringUtils.isAnyBlank(nameRequest.getName()) || Objects.isNull(nameRequest.getAge())) {
-            throw new CustomExceptions.BadRequestException("必須フィールドが入力されていません");
+            throw new BadRequestException("必須フィールドが入力されていません");
         }
     }
 
