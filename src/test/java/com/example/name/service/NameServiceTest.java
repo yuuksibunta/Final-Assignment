@@ -1,7 +1,7 @@
 package com.example.name.service;
 
 import com.example.name.entity.Name;
-import com.example.name.exception.NotFoundException;
+import com.example.name.exception.NameNotFoundException;
 import com.example.name.mapper.NameMapper;
 
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ public class NameServiceTest {
     NameMapper nameMapper;
 
     @Test
-    public void 存在するユーザーのIDを指定したときに正常にユーザーが返されること() throws NotFoundException {
+    public void 存在するユーザーのIDを指定したときに正常にユーザーが返されること() throws NameNotFoundException {
         doReturn(Optional.of(new Name(1, "yuki", 29))).when(nameMapper).findById(1);
         Name actual = nameService.findById(1);
         assertThat(actual).isEqualTo(new Name(1, "yuki", 29));
@@ -38,7 +38,7 @@ public class NameServiceTest {
     @Test
     public void 存在しないユーザーのIDを指定したときにエラーが返されること() {
         doReturn(Optional.empty()).when(nameMapper).findById(10);
-        assertThrows(NotFoundException.class, () -> {
+        assertThrows(NameNotFoundException.class, () -> {
             nameService.findById(10);
         });
     }
@@ -46,7 +46,7 @@ public class NameServiceTest {
     @Test
     public void 存在しないユーザーのIDを指定したときに正しいエラーメッセージが返されること() {
         doReturn(Optional.empty()).when(nameMapper).findById(10);
-        Throwable exception = assertThrows(NotFoundException.class, () -> {
+        Throwable exception = assertThrows(NameNotFoundException.class, () -> {
             nameService.findById(10);
         });
         assertEquals("指定されたIDの名前は存在しません", exception.getMessage());

@@ -1,8 +1,8 @@
 package com.example.name.controller;
 
 import com.example.name.entity.Name;
-import com.example.name.exception.BadRequestException;
-import com.example.name.exception.NotFoundException;
+import com.example.name.exception.NameBadRequestException;
+import com.example.name.exception.NameNotFoundException;
 import com.example.name.mapper.NameMapper;
 import com.example.name.service.NameService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +27,7 @@ public class NameController {
     }
 
     @GetMapping("/names/{id}")
-    public ResponseEntity<Name> getName(@PathVariable("id") Integer id) throws NotFoundException {
+    public ResponseEntity<Name> getName(@PathVariable("id") Integer id) throws NameNotFoundException {
         Name name = nameService.findById(id);
         return new ResponseEntity<>(name, HttpStatus.OK);
     }
@@ -41,7 +41,7 @@ public class NameController {
         }
     }
 
-    @ExceptionHandler(value = {NotFoundException.class, BadRequestException.class,})
+    @ExceptionHandler(value = {NameNotFoundException.class, NameBadRequestException.class,})
     public ResponseEntity<Map<String, String>> handleCustomExceptions(
             RuntimeException e, HttpServletRequest request) {
         HttpStatus status = determineHttpStatus(e);
@@ -54,9 +54,9 @@ public class NameController {
         return new ResponseEntity<>(body, status);
     }
     private HttpStatus determineHttpStatus(RuntimeException e) {
-        if (e instanceof NotFoundException) {
+        if (e instanceof NameNotFoundException) {
             return HttpStatus.NOT_FOUND;
-        } else if (e instanceof BadRequestException) {
+        } else if (e instanceof NameBadRequestException) {
             return HttpStatus.BAD_REQUEST;
         }
         return null;
@@ -71,13 +71,13 @@ public class NameController {
     @PatchMapping("/names/{id}")
     public ResponseEntity<Name> updateName(
             @PathVariable("id") int id,
-            @RequestBody NameRequest nameRequest) throws NotFoundException {
+            @RequestBody NameRequest nameRequest) throws NameNotFoundException {
         Name updatedName = nameService.update(id, nameRequest.getName(), nameRequest.getAge());
         return new ResponseEntity<>(updatedName, HttpStatus.OK);
     }
 
     @DeleteMapping("/names/{id}")
-    public ResponseEntity<NameResponse> deleteName(@PathVariable int id) throws NotFoundException {
+    public ResponseEntity<NameResponse> deleteName(@PathVariable int id) throws NameNotFoundException {
         nameService.delete(id);
 
         String message = "name deleted";
