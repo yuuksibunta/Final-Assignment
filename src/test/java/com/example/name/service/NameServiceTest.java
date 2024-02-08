@@ -1,6 +1,8 @@
 package com.example.name.service;
 
+import com.example.name.controller.NameRequest;
 import com.example.name.entity.Name;
+import com.example.name.exception.NameBadRequestException;
 import com.example.name.exception.NameNotFoundException;
 import com.example.name.mapper.NameMapper;
 
@@ -15,8 +17,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class NameServiceTest {
@@ -50,5 +52,29 @@ public class NameServiceTest {
             nameService.findById(10);
         });
         assertEquals("指定されたIDの名前は存在しません", exception.getMessage());
+    }
+
+    @Test
+    public void 正常に新規のユーザーが登録できること() {
+        NameRequest newNameRequest = new NameRequest("kazushi", 33);
+        doNothing().when(nameMapper).insert(any(Name.class));
+        nameService.insert(newNameRequest);
+        verify(nameMapper).insert(any(Name.class));
+    }
+
+    @Test
+    public void 登録に必要なデータが不足している場合はエラーが返されること() {
+        assertThrows(NameBadRequestException.class, () -> nameService.insert(new NameRequest("", 33)));
+        assertThrows(NameBadRequestException.class, () -> nameService.insert(new NameRequest("kazushi", null)));
+        assertThrows(NameBadRequestException.class, () -> nameService.insert(new NameRequest("", null)));
+    }
+
+    @Test
+    public void 登録に必要なデータが不足している場合は正しいエラーメッセージが返されること() {
+        NameRequest nameRequest = new NameRequest("", null);
+        NameBadRequestException exception = assertThrows(NameBadRequestException.class, () -> {
+            nameService.insert(nameRequest);
+        });
+        assertEquals("必須フィールドが入力されていません", exception.getMessage());
     }
 }
