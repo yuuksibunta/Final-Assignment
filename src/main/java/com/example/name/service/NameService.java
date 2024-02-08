@@ -2,8 +2,8 @@ package com.example.name.service;
 
 import com.example.name.controller.NameRequest;
 import com.example.name.entity.Name;
-import com.example.name.exception.BadRequestException;
-import com.example.name.exception.NotFoundException;
+import com.example.name.exception.NameBadRequestException;
+import com.example.name.exception.NameNotFoundException;
 import com.example.name.mapper.NameMapper;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
@@ -21,25 +21,25 @@ public class NameService {
         this.nameMapper = nameMapper;
     }
 
-    public Name findById(Integer id) throws NotFoundException {
+    public Name findById(Integer id) throws NameNotFoundException {
         Optional<Name> optionalName = nameMapper.findById(id);
-        return optionalName.orElseThrow(() -> new NotFoundException("指定されたIDの名前は存在しません"));
+        return optionalName.orElseThrow(() -> new NameNotFoundException("指定されたIDの名前は存在しません"));
     }
 
-    public Name insert(NameRequest nameRequest) throws BadRequestException {
+    public Name insert(NameRequest nameRequest) throws NameBadRequestException {
         validateNameRequest(nameRequest);
 
         Name newName = nameRequest.convertToName();
         nameMapper.insert(newName);
         return newName;
     }
-    private void validateNameRequest(NameRequest nameRequest) throws BadRequestException {
+    private void validateNameRequest(NameRequest nameRequest) throws NameBadRequestException {
         if (StringUtils.isAnyBlank(nameRequest.getName()) || Objects.isNull(nameRequest.getAge())) {
-            throw new BadRequestException("必須フィールドが入力されていません");
+            throw new NameBadRequestException("必須フィールドが入力されていません");
         }
     }
 
-    public Name update(int id, String newName, int newAge) throws NotFoundException {
+    public Name update(int id, String newName, int newAge) throws NameNotFoundException {
         Optional<Name> optionalExistingName = nameMapper.findById(id);
 
         if (optionalExistingName.isPresent()) {
@@ -51,17 +51,17 @@ public class NameService {
 
             return existingName;
         } else {
-            throw new NotFoundException("指定されたIDの名前は存在しません");
+            throw new NameNotFoundException("指定されたIDの名前は存在しません");
         }
     }
 
-    public void delete(int id) throws NotFoundException {
+    public void delete(int id) throws NameNotFoundException {
         Optional<Name> optionalExistingName = nameMapper.findById(id);
 
         if (optionalExistingName.isPresent()) {
             nameMapper.delete(id);
         } else {
-            throw new NotFoundException("指定されたIDの名前は存在しません");
+            throw new NameNotFoundException("指定されたIDの名前は存在しません");
         }
     }
 }
