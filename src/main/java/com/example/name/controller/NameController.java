@@ -1,7 +1,8 @@
 package com.example.name.controller;
 
 import com.example.name.entity.Name;
-import com.example.name.exception.ResourceNotFoundException;
+import com.example.name.exception.BadRequestException;
+import com.example.name.exception.NotFoundException;
 import com.example.name.mapper.NameMapper;
 import com.example.name.service.NameService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +27,7 @@ public class NameController {
     }
 
     @GetMapping("/names/{id}")
-    public ResponseEntity<Name> getName(@PathVariable("id") int id) throws ResourceNotFoundException {
+    public ResponseEntity<Name> getName(@PathVariable("id") Integer id) throws NotFoundException {
         Name name = nameService.findById(id);
         return new ResponseEntity<>(name, HttpStatus.OK);
     }
@@ -40,34 +41,43 @@ public class NameController {
         }
     }
 
-    @ExceptionHandler(value = ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleResourceNotFoundException(
-            ResourceNotFoundException e, HttpServletRequest request) {
+    @ExceptionHandler(value = {NotFoundException.class, BadRequestException.class,})
+    public ResponseEntity<Map<String, String>> handleCustomExceptions(
+            RuntimeException e, HttpServletRequest request) {
+        HttpStatus status = determineHttpStatus(e);
         Map<String, String> body = Map.of(
                 "timestamp", ZonedDateTime.now().toString(),
-                "status", String.valueOf(HttpStatus.NOT_FOUND.value()),
-                "error", HttpStatus.NOT_FOUND.getReasonPhrase(),
+                "status", String.valueOf(status.value()),
+                "error", status.getReasonPhrase(),
                 "message", e.getMessage(),
                 "path", request.getRequestURI());
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(body, status);
+    }
+    private HttpStatus determineHttpStatus(RuntimeException e) {
+        if (e instanceof NotFoundException) {
+            return HttpStatus.NOT_FOUND;
+        } else if (e instanceof BadRequestException) {
+            return HttpStatus.BAD_REQUEST;
+        }
+        return null;
     }
 
     @PostMapping("/names")
     public ResponseEntity<Name> insert(@RequestBody NameRequest nameRequest) {
-        Name name = nameService.insert(nameRequest.getName(), nameRequest.getAge());
+        Name name = nameService.insert(nameRequest);
         return new ResponseEntity<>(name, HttpStatus.CREATED);
     }
 
     @PatchMapping("/names/{id}")
     public ResponseEntity<Name> updateName(
             @PathVariable("id") int id,
-            @RequestBody NameRequest nameRequest) {
+            @RequestBody NameRequest nameRequest) throws NotFoundException {
         Name updatedName = nameService.update(id, nameRequest.getName(), nameRequest.getAge());
         return new ResponseEntity<>(updatedName, HttpStatus.OK);
     }
 
     @DeleteMapping("/names/{id}")
-    public ResponseEntity<NameResponse> deleteName(@PathVariable int id) {
+    public ResponseEntity<NameResponse> deleteName(@PathVariable int id) throws NotFoundException {
         nameService.delete(id);
 
         String message = "name deleted";

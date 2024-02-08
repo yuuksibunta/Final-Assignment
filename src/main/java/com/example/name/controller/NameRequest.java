@@ -1,14 +1,19 @@
 package com.example.name.controller;
 
+import com.example.name.entity.Name;
 import jakarta.validation.constraints.NotBlank;
 
 public class NameRequest {
     @NotBlank(message = "必須フィールドです")
     private String name;
 
-    private int age;
+    private Integer age;
 
-    public NameRequest(String name, int age) {
+    public Name convertToName() {
+        return new Name(null, this.name, this.age);
+    }
+
+    public NameRequest(String name, Integer age) {
         this.name = name;
         this.age = age;
     }
@@ -21,11 +26,11 @@ public class NameRequest {
         this.name = name;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
