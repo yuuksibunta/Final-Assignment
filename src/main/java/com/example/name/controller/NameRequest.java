@@ -3,6 +3,8 @@ package com.example.name.controller;
 import com.example.name.entity.Name;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.Objects;
+
 public class NameRequest {
     @NotBlank(message = "必須フィールドです")
     private String name;
@@ -37,5 +39,19 @@ public class NameRequest {
     public boolean isValid() {
 
         return name != null && !name.trim().isEmpty();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NameRequest that = (NameRequest) o;
+        return age == that.age &&
+                Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age);
     }
 }
