@@ -14,50 +14,54 @@ IDを主キーとし、氏名と年齢をカラムにもつDBを作成しまし�
 
 ## CRUD処理の実装  
 
-#### Read処理
-  - employeeNumber検索(パスパラメータ検索)の実装
+### Read処理
+
   - 全件検索及び部分一致検索(クエリパラメータ)の実装
   - エラーハンドリングの実装  
 
-全件取得のCURLコマンド
+＜全件取得のcURLコマンド＞
   ```
-  curl http://localhost:8080/employees
+ curl http://localhost:8080/names
   ```
-指定した社員情報取得のcURLコマンド
+＜指定したIDの名前及び年齢取得のcURLコマンド＞
   ```
-  curl http://localhost:8080/employees/{社員番号}
+  curl http://localhost:8080/names/{id}
   ```
 ---
-#### Create処理
+### Create処理
   - 新規登録機能の実装
   - レスポンスボディの設定
-    - ステータスコード201でレスポンス
-    - 新規登録時に「employee created」のメッセージを表示させる
-  - エラーハンドリング
-    - ageカラムが整数意外だった場合「整数を入力してください」というエラーメッセージを表示させる
-    - Nameにバリデーションを追加する
-
-社員情報作成のcURLコマンド
+  
+   
+＜新規登録のcURLコマンド＞
   ```
-curl -X POST -H "Content-Type: application/json" -d '{"name": "{社員名}}", "age": {社員年齢}}' http://localhost:8080/employees
+curl -X POST -H "Content-Type: application/json" -d '{"name": "名前", "age": 年齢}' http://localhost:8080/names
   ```
 ----
-#### Update処理
+### Update処理
   - nameを更新することができる
-  - ageを更新することができる  
+  - ageを更新することができる
+  - 必須パラメーターの入力が不足している場合はエラーハンドリングを行う  
 
 社員情報更新のcURLコマンド
   ```
-curl -X PATCH -H "Content-Type: application/json" -d '{"name": "{更新する社員名前}", "age": {更新する社員年齢}}' http://localhost:8080/employees/{更新したい社員の番号}
+curl -X PATCH -H "Content-Type: application/json" -d '{"name": "名前", "age": 年齢}' http://localhost:8080/names/{更新したいID}
   ```
 ----
-#### Delete処理
-  - 社員番号を指定し、存在する場合は削除することができる
+### Delete処理
+  - IDを指定し、存在する場合は削除することができる
+  - 削除時に、メッセージが表示されるようにする
 
-社員情報削除のcURLコマンド
+登録情報削除のcURLコマンド
   ```
-curl -X DELETE http://localhost:8080/employees/{削除したい社員の番号} 
+curl -X DELETE http://localhost:8080/names/{削除したいID} 
   ```
+削除時のメッセージ表示
+```
+{
+    "message": "name deleted"
+}
+```
 ----
 
 ### HTTPステータスコード
@@ -66,6 +70,7 @@ curl -X DELETE http://localhost:8080/employees/{削除したい社員の番号}
 | **HTTPステータスコード** | **説明** |      
 |:------------------------:|:-----------------------------------------------------------:|
 |         200      | OK　エラーではありません。リクエストが成功し、要求に応じたレスポンスが返されます。| 
+|         201      | OK　エラーではありません。リクエストが成功し、リソースが正常に作成された場合に返されます。 |
 |         400      |   Bad Request. エラーです。送信されたパラメータに誤りがある場合に返されます。   |   
 |         404      |   Not Found. エラーです。指定されたパスが存在しなかった場合に返されます。    |  
 |         500      | Internal Error. エラーです。API自身のエラーによって処理の続行ができない場合などに返されます。|
