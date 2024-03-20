@@ -23,7 +23,7 @@ IDを主キーとし、氏名と年齢をカラムにもつDBを作成しまし�
   ```
  curl http://localhost:8080/names
   ```
-＜指定したIDの名前及び年齢取得のcURLコマンド＞
+＜指定したIDの登録情報取得のcURLコマンド＞
   ```
   curl http://localhost:8080/names/{id}
   ```
